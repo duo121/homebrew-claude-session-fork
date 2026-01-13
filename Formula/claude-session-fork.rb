@@ -5,15 +5,21 @@ class ClaudeSessionFork < Formula
   sha256 "563a88b4cd236ab863fe8db6a6f03a4581794e6aeff56c7b97316adec79eac07"
   license "MIT"
 
-  # Don't depend on homebrew node, use system node
   def install
-    system "npm", "install", *std_npm_args
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    libexec.install Dir["*"]
+    (bin/"sfork").write_env_script libexec/"dist/cli.js", PATH: "#{HOMEBREW_PREFIX}/bin:$PATH"
+    (bin/"csfork").write_env_script libexec/"dist/cli.js", PATH: "#{HOMEBREW_PREFIX}/bin:$PATH"
+    (bin/"claude-session-fork").write_env_script libexec/"dist/cli.js", PATH: "#{HOMEBREW_PREFIX}/bin:$PATH"
+    
+    # Install npm dependencies
+    system "npm", "install", "--prefix", libexec, "--production"
   end
 
   def caveats
     <<~EOS
-      Requires Node.js 18+. Install via nvm or from https://nodejs.org
+      Requires Node.js 18+. Install via:
+        brew install node
+      Or use nvm: https://github.com/nvm-sh/nvm
     EOS
   end
 
