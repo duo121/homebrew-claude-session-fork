@@ -5,11 +5,16 @@ class ClaudeSessionFork < Formula
   sha256 "563a88b4cd236ab863fe8db6a6f03a4581794e6aeff56c7b97316adec79eac07"
   license "MIT"
 
-  depends_on "node"
-
+  # Don't depend on homebrew node, use system node
   def install
     system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
+  end
+
+  def caveats
+    <<~EOS
+      Requires Node.js 18+. Install via nvm or from https://nodejs.org
+    EOS
   end
 
   test do
